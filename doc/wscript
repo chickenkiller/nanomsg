@@ -1,0 +1,104 @@
+
+from waflib import Task, TaskGen
+
+#TaskGen.declare_chain(
+#		name = 'asciidoc_to_xml',
+#		rule = '${ASCIIDOC} -d manpage -b docbook -f ${SRC[0].parent.bldpath()+"/asciidoc.conf"} -aversion=${nn_package_version} -o ${TGT} ${SRC}',
+#		ext_in = '.txt',
+#		ext_out = '.xml',
+#		shell = True,
+#		reentrant = True
+#)
+
+#TaskGen.declare_chain(
+#		name = 'asciidoc_to_html',
+#		rule = '${ASCIIDOC} -d manpage -b xhtml11 -a stylesheet=${SRC[0].parent.abspath()+"/htmldoc.css"} -f ${SRC[0].parent.bldpath()+"/asciidoc.conf"} -aversion=${nn_package_version} -o ${TGT} ${SRC}',
+#		ext_in = '.txt',
+#		ext_out = '.html',
+#		shell = True,
+#		reentrant = 0
+#)
+
+#TaskGen.declare_chain(
+#		name = 'xmlto_man1',
+#		rule = '${ASCIIDOC} -d manpage -b docbook -f ${SRC[0].parent.bldpath()+"/asciidoc.conf"} -aversion=${nn_package_version} -o ${TGT[0].change_ext(".xml").bldpath()} ${SRC} && ${XMLTO} -o ${TGT[0].parent.bldpath()} man ${TGT[0].change_ext(".xml").bldpath()}',
+#		ext_in = '.txt',
+#		ext_out = '.1',
+#		install_path = '${MANDIR}/man1',
+#		shell = True,
+#		reentrant = 0
+#)
+#TaskGen.declare_chain(
+#		name = 'xmlto_man3',
+#		rule = '${ASCIIDOC} -d manpage -b docbook -f ${SRC[0].parent.bldpath()+"/asciidoc.conf"} -aversion=${nn_package_version} -o ${TGT[0].change_ext(".xml").bldpath()} ${SRC} && ${XMLTO} -o ${TGT[0].parent.bldpath()} man ${TGT[0].change_ext(".xml").bldpath()}',
+#		ext_in = '.txt',
+#		ext_out = '.3',
+#		install_path = '${MANDIR}/man3',
+#		shell = True,
+#		reentrant = False
+#)
+#TaskGen.declare_chain(
+#		name = 'xmlto_man7',
+#		rule = '${ASCIIDOC} -d manpage -b docbook -f ${SRC[0].parent.bldpath()+"/asciidoc.conf"} -aversion=${nn_package_version} -o ${TGT[0].change_ext(".xml").bldpath()} ${SRC} && ${XMLTO} -o ${TGT[0].parent.bldpath()} man ${TGT[0].change_ext(".xml").bldpath()}',
+#		ext_in = '.txt',
+#		ext_out = '.7',
+#		install_path = '${MANDIR}/man7',
+#		shell = True,
+#		reentrant = False
+#)
+
+
+def build(bld):
+
+	MAN7 = '''
+		nanomsg
+		nn_pair
+		nn_reqrep
+		nn_pubsub
+		nn_survey
+		nn_pipeline
+		nn_bus
+		nn_inproc
+		nn_ipc
+		nn_tcp
+		nn_tcpmux
+		nn_ws
+		nn_env'''.split()
+
+	MAN3 = '''
+		nn_errno
+		nn_strerror
+		nn_symbol
+		nn_symbol_info
+		nn_term
+		nn_allocmsg
+		nn_reallocmsg
+		nn_freemsg
+		nn_socket
+		nn_close
+		nn_getsockopt
+		nn_setsockopt
+		nn_bind
+		nn_connect
+		nn_shutdown
+		nn_send
+		nn_recv
+		nn_sendmsg
+		nn_recvmsg
+		nn_device
+		nn_cmsg
+		nn_poll'''.split()
+
+	MAN1 = '''
+		nanocat
+		tcpmuxd'''.split()
+
+	#bld( source = [ ('%s.txt' % f) for f in MAN1+MAN3+MAN7 ])
+	bld(
+			features = 'asciidoc_to_xml',
+			source = [ ('%s.txt' % f) for f in MAN1+MAN3+MAN7 ],
+			target = [ ('%s.html' % f) for f in MAN1+MAN3+MAN7 ]
+		)
+	#bld( source = [ ('%s.txt' % f) for f in MAN1 ], features = 'xmlto_man1')
+	#bld( source = [ ('%s.xml' % f) for f in MAN3 ], features = 'xmlto_man3')
+	#bld( source = [ ('%s.xml' % f) for f in MAN7 ], features = 'xmlto_man7')
